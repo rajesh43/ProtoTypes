@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewBag.Title = "Conference";
+}
+<h2>Conference CRUD Operations</h2>
+<a href="#" class="btn btn-success" style="margin-bottom:10px" onclick="ShowPopUp('@Url.Action("AddOrEdit","Conference")')"><i class="fa fa-plus"></i>Add New</a>
+<table id="ConfTable" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>ConferenceLinks</th>
+            <th>Departments</th>
+            <th>Location</th>
+            <th>References</th>
+            <th>AbstractDueDate</th>
+            <th>ImageLink</th>
+            <th>Date</th>
+            <th></th>
+        </tr>
+
+    </thead>
+
+</table>
+
+
+@*<link href="~/Content/DataTables/css/jquery.dataTables.min.css" rel="stylesheet" />*@
+<link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="~/Content/zoom.css" rel="stylesheet" />
+
+@section scripts {
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/notify.min.js"></script>
+    <script src="~/Scripts/notify.js"></script>
+    <script src="~/Scripts/zoom.js"></script>
+
+    <script>
+        var Popup, dataTable;
+        $(document).ready(function () {
+            $(function () {
+                $('#pic').toggle(
+                    function () { $(this).animate({ width: "400px" }, 500) },
+                    function () { $(this).animate({ width: "50px" }, 500); }
+                );
+            });
+
+            dataTable = $("#ConfTable").DataTable({
+
+
+
+                "ajax": {
+
+                    "url": "/Conference/GetData",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+
+                "columns": [
+                    { "data": "ConferenceLinks" },
+                    { "data": "Departments" },
+                    { "data": "Location" },
+                    { "data": "References" },
+                    { "data": "AbstractDueDate" },
+                    { "data": "ImageLink" },
+                    { "data": "Date" },
+                    {
+                        "data": "ID", "render": function (data) {
+
+                            return "<a class='btn btn-default btn-sm' onclick=ShowPopUp('@Url.Action("AddOrEdit","Conference")/" + data + "')><i class='fa fa-pencil'></i> Edit </a><a class='btn btn-danger btn-sm' onclick=Delete(" + data + ")><i class='fa fa-trash'></i> Delete </a>"
+
+                        }
+                    }
+
+
+                    //{ "data": "ConferenceLinks" },
+                  
+
+                ],
+                "columnDefs": [{
+                    "targets": 5,
+                    "data": "img",
+                    "render": function (url, type, full) {
+                        return '<img height="100px" width="150px" data-action="zoom"  src="' + url.replace('~', '') + '"/>'
+
+                        
+                        //return ' <div class="container1"><input type="checkbox" id="zoomCheck"><label for="zoomCheck">' + '<img height="50px" width="50px" class="data-closeclick"  src="' + url.replace('~', '') + '"/>' +'</label></div>'
+
+                                                                                                                                                                                                                                                  }
+                }
+                    ],
+
+
+
+
+            });
+
+
+
+        });
+
+
+        function ShowPopUp(url) {
+
+            window.open(url, "", "width=1020,height=550,resizable=yes,scrollBars=yes");
+        }
+
+        function Delete(id) {
+
+            if (confirm('Are You sure to delete this record'))
+            {
+                $.ajax({
+
+                    type: "POST",
+                    url: '@Url.Action("Delete","Conference")/' + id,
+                    success: function (data) {
+                        if (data.success) {
+
+                             dataTable.ajax.reload();
+
+
+
+                        }
+
+                    }
+
+
+
+
+                });
+
+            }
+
+        }
+
+    </script>
+
+
+
+}

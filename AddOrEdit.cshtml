@@ -1,0 +1,136 @@
+﻿@model  ConferenceMVC.Models.Conference
+@{
+    //Layout = null;
+}
+
+@using (Html.BeginForm("AddOrEdit", "Conference", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return SubmitForm(this)" }))
+{
+    @Html.HiddenFor(model => model.ID)
+    @Html.HiddenFor(model => model.ImageLink)
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <div class="form-group">
+
+            @Html.LabelFor(model => model.ConferenceLinks, new { @class = "control-label" })
+            @Html.EditorFor(model => model.ConferenceLinks, new { htmlAttributes = new { @class = "form-control" } })
+
+        </div>
+        <div class="form-group">
+
+            @Html.LabelFor(model => model.Departments, new { @class = "control-label" })
+            @Html.EditorFor(model => model.Departments, new { htmlAttributes = new { @class = "form-control" } })
+
+        </div>
+        <div class="form-group">
+
+            @Html.LabelFor(model => model.Location, new { @class = "control-label" })
+            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })
+
+        </div>
+        <div class="form-group">
+
+            @Html.LabelFor(model => model.References, new { @class = "control-label" })
+            @Html.EditorFor(model => model.References, new { htmlAttributes = new { @class = "form-control" } })
+
+        </div>
+        <div class="form-group">
+
+            @Html.LabelFor(model => model.AbstractDueDate, new { @class = "control-label" })
+            @Html.EditorFor(model => model.AbstractDueDate, new { htmlAttributes = new { @class = "form-control" } })
+
+        </div>
+        <div class="form-group">
+
+            @Html.LabelFor(model => model.Date, new { @class = "control-label" })
+            @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ImageLink, new { @class = "control-label" })
+                <img src="@Url.Content(Model.ImageLink)" style="margin:10px; height:200px ;width:200px; " id="imagePreview" />
+                <div class="col-md-10">
+                    <input type="file" name="ImageUpload" accept="image/jpeg,image/png" onchange="ShowImagePreview(this, document.getElementById('imagePreview'))" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <div class="form-group">
+
+            <input type="submit" class="btn btn-primary" value="Submit" />
+            <input type="Reset" class="btn btn-warning" value="Reset" />
+
+        </div>
+    </div>
+
+}
+<link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="~/Content/zoom.css" rel="stylesheet" />
+@section scripts {
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/zoom.js"></script>
+
+    <script type="text/javascript">
+        function SubmitForm(form) {
+            var ajaxconfig = {
+
+                type: "POST",
+                url: form.action,
+                //data: $(form).serialize(),
+                data: new FormData(form),
+                success: function (data) {
+
+                    if (data.success) {
+
+                        //window.parent.dataTable.ajax.reload();
+                        window.opener.dataTable.ajax.reload();
+                        window.close();
+                        //$.notify(data.message, {
+                        //    gloabalposition: "top center",
+                        //    className: "success"
+
+
+                        //});
+                    }
+
+                }
+
+
+            }
+
+            if ($(form).attr('enctype') == "multipart/form-data") {
+                ajaxconfig["contentType"] = false;
+                ajaxconfig["processData"] = false;
+
+            }
+            $.ajax(ajaxconfig);
+
+
+
+            return false;
+        }
+
+
+        function ShowImagePreview(imageUploader, previewImage) {
+
+            if (imageUploader.files && imageUploader.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $(previewImage).attr('src', e.target.result);
+
+                }
+                reader.readAsDataURL(imageUploader.files[0]);
+            }
+
+
+
+
+        }
+    </script>
+
+}
